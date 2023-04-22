@@ -28,3 +28,15 @@ a {
     background: black;
   }
 }
+
+.ql-syntax {
+  background-color: #f8f8f8;
+  border-radius: 3px;
+  border: 1px solid #e8e8e8;
+  color: #333;
+  font-family: monospace;
+  font-size: 1rem;
+  margin: 0.5rem 0;
+  padding: 0.5rem;
+  white-space: pre-wrap;
+}
