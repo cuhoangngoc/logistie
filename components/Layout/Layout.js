@@ -19,7 +19,7 @@ const Layout = ({ children }) => {
     },
     {
       name: 'Nhân viên',
-      href: '/imployee',
+      href: '/employees',
       icon: <FcPortraitMode size={32} />,
     },
     {
