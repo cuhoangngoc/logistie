@@ -40,3 +40,11 @@ a {
   padding: 0.5rem;
   white-space: pre-wrap;
 }
+
+.ql-font-monospace {
+  font-family: monospace;
+}
+
+.ql-font-serif {
+  font-family: serif;
+}

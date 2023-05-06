@@ -40,7 +40,7 @@ const Layout = ({ children }) => {
     },
     {
       name: 'Đăng xuất',
-      href: '/logout',
+      href: '/api/auth/logout',
       icon: <FcImport size={32} />,
     },
   ];
