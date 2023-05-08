@@ -4,15 +4,37 @@ export default async function handler(req, res) {
   if (req.method === 'GET') {
     try {
       const client = await clientPromise;
-      const db = client.db('logistie');
 
-      const user = await db
+      const result = await client
+        .db('logistie')
         .collection('users')
-        .find({ email: req.query.email }, { projection: { password: 0 } })
+        .aggregate([
+          {
+            $match: {
+              email: req.query.email,
+            },
+          },
+          {
+            $project: {
+              password: 0,
+            },
+          },
+          {
+            $lookup: {
+              from: 'departments',
+              localField: 'user_metadata.department_id',
+              foreignField: '_id',
+              as: 'user_metadata.department',
+            },
+          },
+          {
+            $unwind: '$user_metadata.department',
+          },
+        ])
         .limit(1)
         .toArray();
 
-      res.json(user[0]);
+      res.status(200).json(result[0]);
     } catch (err) {
       res.status(500).json({ statusCode: 500, message: err.message });
     }
