@@ -72,7 +72,7 @@ const formats = [
 
 // Quill editor component for React
 // Received a callback function to get content
-const Editor = ({ getContent }) => {
+const Editor = ({ getContent, defaultValue }) => {
   useEffect(() => {
     if (typeof window !== 'undefined') {
       window.katex = katex;
@@ -85,6 +85,7 @@ const Editor = ({ getContent }) => {
       formats={formats}
       theme="snow"
       onChange={(value) => getContent(value)}
+      defaultValue={defaultValue}
     />
   );
 };
