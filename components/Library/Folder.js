@@ -110,7 +110,7 @@ const Folder = ({ folder,role }) => {
         </div>
       </div>
       <div className="flex flex-row border border-black rounded-xl justify-between hover:bg-slate-400 p-2 mr-10 min-w-[200px] text-black group bg-white">
-        <Link href={`/Library/folder/${folder.id}`} className='flex flex-row'>
+        <Link href={`/library/folder/${folder.id}`} className='flex flex-row'>
           
             <AiFillFolder className="text-xl"></AiFillFolder>
             <p> {folder.name} </p>

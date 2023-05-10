@@ -7,10 +7,10 @@ import imgdemo from '../public/imgs/newspage/img-demo.jpg';
 import { useState, useEffect } from 'react';
 import AddNewsCard from '../components/NewsPage/AddNewsCard';
 import { useUser } from '@auth0/nextjs-auth0/client';
+import { withPageAuthRequired } from '@auth0/nextjs-auth0/client';
 
-export default function Home() {
+function Home({user}) {
   const [news, setNews] = useState([]);
-  const { user, isLoading } = useUser();
 
   useEffect(() => {
     fetch('../api/news/getAllNews')
@@ -20,7 +20,7 @@ export default function Home() {
   }, []);
 
   return (
-    <Layout>
+    <Layout user={user}>
       {user ? (
           <AddNewsCard></AddNewsCard>
         ) : <AddNewsCard></AddNewsCard>}
@@ -38,3 +38,4 @@ export default function Home() {
     </Layout>
   );
 }
+export default withPageAuthRequired(Home);
