@@ -1,7 +1,9 @@
 import { UserProvider } from '@auth0/nextjs-auth0/client';
 import Head from 'next/head';
+import { ToastContainer } from 'react-toastify';
 import favicon from '../public/imgs/logo/drop-shipping/drop-shipping-48.png';
 import '../styles/globals.css';
+import 'react-toastify/dist/ReactToastify.css';
 
 function MyApp({ Component, pageProps }) {
   return (
@@ -13,6 +15,7 @@ function MyApp({ Component, pageProps }) {
         <meta name="description" content={Component.description} />
       </Head>
       <Component {...pageProps} />;
+      <ToastContainer />
     </UserProvider>
   );
 }

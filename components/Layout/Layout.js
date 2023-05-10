@@ -5,12 +5,12 @@ import {
   FcNews,
   FcPortraitMode,
   FcLibrary,
-  FcCalendar,
   FcImport,
+  FcDocument,
   FcOrganization,
 } from 'react-icons/fc';
 
-const Layout = ({ children }) => {
+const Layout = ({ user, children }) => {
   const navLinks = [
     {
       name: 'Bản tin',
@@ -28,19 +28,18 @@ const Layout = ({ children }) => {
       icon: <FcLibrary size={32} />,
     },
     {
-      name: 'Lịch',
-      href: '/calendar',
-      icon: <FcCalendar size={32} />,
-    },
-    ,
-    {
       name: 'Phòng họp',
       href: '/meeting-room',
       icon: <FcOrganization size={32} />,
     },
     {
+      name: 'Hồ sơ',
+      href: `/employees/${user.email}`,
+      icon: <FcDocument size={32} />,
+    },
+    {
       name: 'Đăng xuất',
-      href: '/logout',
+      href: '/api/auth/logout',
       icon: <FcImport size={32} />,
     },
   ];
