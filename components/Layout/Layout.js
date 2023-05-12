@@ -29,7 +29,7 @@ const Layout = ({ user, children }) => {
     },
     {
       name: 'Phòng họp',
-      href: '/meeting-room',
+      href: '/resources',
       icon: <FcOrganization size={32} />,
     },
     {

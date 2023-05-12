@@ -9,22 +9,20 @@ import AddNewsCard from '../components/NewsPage/AddNewsCard';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { withPageAuthRequired } from '@auth0/nextjs-auth0/client';
 
-function Home({user}) {
+function Home({ user }) {
   const [news, setNews] = useState([]);
 
   useEffect(() => {
     fetch('../api/news/getAllNews')
-      .then(response => response.json())
-      .then(data => setNews(data))
-      .catch(error => console.error(error));
+      .then((response) => response.json())
+      .then((data) => setNews(data))
+      .catch((error) => console.error(error));
   }, []);
 
   return (
     <Layout user={user}>
-      {user ? (
-          <AddNewsCard></AddNewsCard>
-        ) : <AddNewsCard></AddNewsCard>}
-      <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+      {user ? <AddNewsCard></AddNewsCard> : <AddNewsCard></AddNewsCard>}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {news.map((news) => (
           <NewsCard
             urlimg={imgdemo}
