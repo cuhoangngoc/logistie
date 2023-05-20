@@ -1,6 +1,7 @@
 import Logo from '../../public/imgs/logo/drop-shipping/drop-shipping-100.png';
 import Image from 'next/image';
 import Link from 'next/link';
+import ReqIcon from '../../public/imgs/requests/request.png';
 import {
   FcNews,
   FcPortraitMode,
@@ -18,6 +19,11 @@ const Layout = ({ user, children }) => {
       icon: <FcNews size={32} />,
     },
     {
+      name: 'Hồ sơ',
+      href: `/employees/${user.email}`,
+      icon: <FcDocument size={32} />,
+    },
+    {
       name: 'Nhân viên',
       href: '/employees',
       icon: <FcPortraitMode size={32} />,
@@ -33,9 +39,9 @@ const Layout = ({ user, children }) => {
       icon: <FcOrganization size={32} />,
     },
     {
-      name: 'Hồ sơ',
-      href: `/employees/${user.email}`,
-      icon: <FcDocument size={32} />,
+      name: 'Yêu cầu',
+      href: '/requests',
+      icon: <Image src={ReqIcon} alt="" className="h-8 w-8 object-scale-down" />,
     },
     {
       name: 'Đăng xuất',
@@ -84,12 +90,7 @@ const Layout = ({ user, children }) => {
         <div className="h-full overflow-y-auto bg-gray-50 px-3 py-4 dark:bg-gray-800">
           {/* Logo */}
           <Link href="/" className="mb-5 flex items-center pl-2.5">
-            <Image
-              src={Logo}
-              className="mr-3 h-16 w-16"
-              alt="IE tutor Logo"
-              priority
-            />
+            <Image src={Logo} className="mr-3 h-16 w-16" alt="IE tutor Logo" priority />
             <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
               Logistie
             </span>
@@ -103,9 +104,7 @@ const Layout = ({ user, children }) => {
                   className="flex items-center rounded-lg p-2 text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
                 >
                   {link.icon}
-                  <span className="ml-3 flex-1 whitespace-nowrap">
-                    {link.name}
-                  </span>
+                  <span className="ml-3 flex-1 whitespace-nowrap">{link.name}</span>
                 </Link>
               </li>
             ))}

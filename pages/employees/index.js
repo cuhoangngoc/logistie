@@ -10,12 +10,11 @@ const Employees = ({ user }) => {
   const [selectedDepartment, setSelectedDepartment] = useState({});
   const [employees, setEmployees] = useState([]);
   const [signedInUser, setSignedInUser] = useState({});
+  const [titles, setTitles] = useState([]);
 
   useEffect(() => {
     const getSignedInUser = async () => {
-      const res = await axios.get(
-        `/api/users/get-user-info?email=${user.email}`
-      );
+      const res = await axios.get(`/api/users/get-user-info?email=${user.email}`);
       setSignedInUser(res.data);
     };
 
@@ -31,14 +30,14 @@ const Employees = ({ user }) => {
   const handleDepartmentChange = (e) => {
     setSelectedDepartment(e.target.value);
 
-    const d = departments.find(
-      (department) => department._id === e.target.value
-    );
+    const d = departments.find((department) => department._id === e.target.value);
 
     if (!d) setEmployees([]);
     else {
       setSelectedDepartment(d);
       setEmployees(d.employees);
+
+      setTitles(d.titles);
     }
   };
 
@@ -75,14 +74,12 @@ const Employees = ({ user }) => {
           <h2 className="text-xl font-bold">Danh sách nhân viên</h2>
 
           {/* add employees btn */}
-          {Boolean(signedInUser.user_metadata?.role) && (
-            <AddEmpForm departments={departments} />
-          )}
+          {Boolean(signedInUser.user_metadata?.role) && <AddEmpForm departments={departments} />}
         </div>
 
         <div className="relative overflow-x-auto shadow-md sm:rounded-lg mt-4">
-          <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-            <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+          <table className="w-full text-sm text-left text-gray-500 table-zebra">
+            <thead className="text-xs text-gray-700 uppercase bg-gray-50">
               <tr>
                 <th scope="col" className="px-6 py-3">
                   #
@@ -140,9 +137,7 @@ const Employees = ({ user }) => {
                     <td className="px-6 py-4">
                       {employee.user_metadata.address || 'Chưa cập nhật'}
                     </td>
-                    <td className="px-6 py-4">
-                      {employee.user_metadata.title}
-                    </td>
+                    <td className="px-6 py-4">{employee.user_metadata.title}</td>
                     <td className="px-6 py-4">{employee.user_metadata.cccd}</td>
                     <td className="px-6 py-4">
                       {employee.user_metadata.birthday
@@ -164,8 +159,7 @@ const Employees = ({ user }) => {
               ) : (
                 <tr>
                   <td className="text-center py-4 px-6" colSpan="100%">
-                    Không có nhân viên nào thuộc phòng ban{' '}
-                    {selectedDepartment.name}
+                    Không có nhân viên nào thuộc phòng ban {selectedDepartment.name}
                   </td>
                 </tr>
               )}

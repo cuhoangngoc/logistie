@@ -7,6 +7,8 @@ module.exports = {
 
     // Or if using `src` directory:
     './src/**/*.{js,ts,jsx,tsx}',
+
+    'node_modules/preline/dist/*.js',
   ],
   theme: {
     extend: {
@@ -17,14 +19,18 @@ module.exports = {
         neutral: '#3D4451',
         'base-100': '#FFFFFF',
         info: '#3ABFF8',
-        success: '#98D8AA',
-        warning: '#FBBD23',
+        success: '#7FB77E',
+        warning: '#F7D060',
         error: '#E76161',
         disabled: '#ccc',
       },
     },
   },
-  plugins: [require('daisyui'), require('flowbite/plugin')],
+  plugins: [
+    require('daisyui'),
+    require('flowbite/plugin'),
+    require('preline/plugin'),
+  ],
 
   daisyui: {
     themes: [
@@ -36,8 +42,8 @@ module.exports = {
           neutral: '#3D4451',
           'base-100': '#FFFFFF',
           info: '#3ABFF8',
-          success: '#98D8AA',
-          warning: '#FBBD23',
+          success: '#7FB77E',
+          warning: '#F7D060',
           error: '#E76161',
           disabled: '#CFD2CF',
         },

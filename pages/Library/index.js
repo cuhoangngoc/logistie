@@ -11,13 +11,14 @@ import { BsChatRightFill } from 'react-icons/bs';
 const Index = ({ user }) => {
   const { folder, childFolders, childFiles } = UseFolder(null);
   const [client, setClient] = useState([]);
-  const [user_role,set_userrole]=useState({role:0});
+  const [user_role, set_userrole] = useState({ role: 0 });
   useEffect(() => {
     async function getRole() {
       fetch(
         `http://localhost:3000/api/users/get-user-info?email=${user.email}`,
         { method: 'GET', headers: { 'Content-Type': 'application/json' } }
-      ).then((response) => {
+      )
+        .then((response) => {
           if (!response.ok) {
             throw new Error(`Can not find user with email ${user.email}`);
           }
@@ -31,14 +32,13 @@ const Index = ({ user }) => {
           console.log(err);
         });
     }
-    getRole()
-  },[]);
+    getRole();
+  }, [user.email]);
   return (
     <Layout user={user}>
       <div>
-       
-        {user_role.role===1&&(<Addfolder currentFolder={folder} />)} 
-         <FolderBreadcrums currentFolder={folder}></FolderBreadcrums>
+        {user_role.role === 1 && <Addfolder currentFolder={folder} />}
+        <FolderBreadcrums currentFolder={folder}></FolderBreadcrums>
       </div>
 
       {childFolders.length > 0 && (

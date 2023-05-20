@@ -6,7 +6,7 @@ export default async function handler(req, res) {
   if (req.method === 'PATCH') {
     try {
       const client = await clientPromise;
-      const { user_metadata } = req.body;
+      const { user_metadata, picture } = req.body;
 
       if (!user_metadata) {
         return res.status(400).json({ error: 'Missing user_metadata' });
@@ -17,10 +17,19 @@ export default async function handler(req, res) {
 
       const email = req.query.email;
 
-      const userToBeUpdated = await client
-        .db('logistie')
-        .collection('users')
-        .findOne({ email });
+      const userToBeUpdated = await client.db('logistie').collection('users').findOne({ email });
+
+      // in case user changes picture, we need to delete the old one from cloudinary
+      if (picture !== userToBeUpdated.picture && userToBeUpdated.picture) {
+        try {
+          console.log(userToBeUpdated.picture);
+          await axios.post(`${process.env.API_URL}/cloudinary/destroy`, {
+            secure_url: userToBeUpdated.picture,
+          });
+        } catch (e) {
+          res.status(500).json({ error: e.message });
+        }
+      }
 
       const updatedUser = await client
         .db('logistie')
@@ -33,6 +42,7 @@ export default async function handler(req, res) {
                 ...userToBeUpdated.user_metadata,
                 ...user_metadata,
               },
+              picture: picture ?? userToBeUpdated.picture,
               updated_at: new Date(),
             },
           },
@@ -49,6 +59,13 @@ export default async function handler(req, res) {
           ...user_metadata,
         },
       };
+
+      // if (picture) {
+      //   data.picture = picture;
+      //   data.connection = process.env.AUTH0_CONNECTION;
+      // }
+
+      // console.log(data);
 
       const auth0User = await axios.patch(
         `${process.env.API_AUDIENCE}/users/auth0|${updatedUser.value._id}`,
