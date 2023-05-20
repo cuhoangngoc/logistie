@@ -49,7 +49,6 @@ function reducer(state, { type, payload }) {
 }
 
 export function UseFolder(folderId = null, folder = null) {
-  
   const [state, dispatch] = useReducer(reducer, {
     folderId,
     folder,
@@ -64,7 +63,8 @@ export function UseFolder(folderId = null, folder = null) {
       fetch(
         `http://localhost:3000/api/users/get-user-info?email=${user.email}`,
         { method: 'GET', headers: { 'Content-Type': 'application/json' } }
-      ).then((response) => {
+      )
+        .then((response) => {
           if (!response.ok) {
             throw new Error(`Can not find user with email ${user.email}`);
           }
@@ -77,8 +77,8 @@ export function UseFolder(folderId = null, folder = null) {
           console.log(err);
         });
     }
-    getRole()
-  },[]);
+    getRole();
+  }, []);
   useEffect(() => {
     dispatch({ type: ACTION.SELECT_FOLDER, payload: { folderId, folder } });
   }, [folderId, folder]);
@@ -118,7 +118,7 @@ export function UseFolder(folderId = null, folder = null) {
     async function child() {
       const q = query(
         collection(db, 'folders'),
-        where('parentID', '==', folderId),
+        where('parentID', '==', folderId)
         // where('userID', '==', 'UEsNPNa2hARtXooYkMvRsoFHh3nFrTAC')
         // orderBy('createAt'),
       );
@@ -135,10 +135,10 @@ export function UseFolder(folderId = null, folder = null) {
           //
           const cities = [];
           querySnapshot.forEach((doc) => {
-              cities.push(doc.data().name);
+            cities.push(doc.data().name);
           });
           // console.log("Current cities in CA: ", cities.join(", "));
-          
+
           dispatch({
             type: ACTION.SET_CHILD_FOLDERS,
             payload: { childFolders: snapshot.docs.map(formattedDoc) },
@@ -148,13 +148,13 @@ export function UseFolder(folderId = null, folder = null) {
       });
     }
     child();
-  }, [folderId,user]);
+  }, [folderId, user]);
 
   useEffect(() => {
     async function child() {
       const q = query(
         collection(db, 'files'),
-        where('folderId', '==', folderId),
+        where('folderId', '==', folderId)
         // where('userId', '==','UEsNPNa2hARtXooYkMvRsoFHh3nFrTAC')
         // orderBy('createAt'),
       );
@@ -174,10 +174,10 @@ export function UseFolder(folderId = null, folder = null) {
           });
         });
         unsubcribe;
-        console.log(unsubcribe)
+        console.log(unsubcribe);
       });
     }
     child();
-  }, [folderId,user]);
+  }, [folderId, user]);
   return state;
 }

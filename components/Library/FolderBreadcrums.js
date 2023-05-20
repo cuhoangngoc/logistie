@@ -8,12 +8,14 @@ const FolderBreadcrums = ({ currentFolder }) => {
   return (
     <div className="text-sm breadcrumbs">
       <ul>
-        {path.map((folder, index) => (      
-              <li key={folder.id}>
-                 <Link href={folder.id?`/Library/folder/${folder.id}`:`/Library`}>
-                     {folder.name}
-                 </Link>           
-              </li>         
+        {path.map((folder, index) => (
+          <li key={folder.id}>
+            <Link
+              href={folder.id ? `/library/folder/${folder.id}` : `/library`}
+            >
+              {folder.name}
+            </Link>
+          </li>
         ))}
         {currentFolder && (
           <li>
