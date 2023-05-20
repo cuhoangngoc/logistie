@@ -18,20 +18,13 @@ function Home({ user }) {
       .then(response => response.json())
       .then(data => setNews(data))
       .catch(error => console.error(error));
-    const getSignedInUser = async () => {
-      const res = await axios.get(
-        `/api/users/get-user-info?email=${user.email}`
-      );
-      setSignedInUser(res.data);
-    };
-    getSignedInUser();
-  }, [user.email]);
+  }, []);
 
   return (
     <Layout user={user}>
-      {Boolean(signedInUser.user_metadata?.role) && (
-            <AddNewsCard></AddNewsCard>
-          )}
+      {user ? (
+          <AddNewsCard></AddNewsCard>
+        ) : <AddNewsCard></AddNewsCard>}
       <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
         {news.map((news) => (
           <NewsCard
