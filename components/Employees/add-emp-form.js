@@ -102,9 +102,7 @@ const AddEmpForm = ({ departments }) => {
               <div className="relative flex w-full flex-col rounded-lg border-0 bg-white shadow-lg outline-none focus:outline-none">
                 {/*header*/}
                 <div className="flex items-start justify-between rounded-t border-b border-solid border-slate-200 p-5">
-                  <h3 className="text-3xl font-semibold">
-                    Thêm vào một nhân viên mới
-                  </h3>
+                  <h3 className="text-3xl font-semibold">Thêm vào một nhân viên mới</h3>
                   <button
                     className="float-right ml-auto border-0 bg-transparent p-1 text-3xl font-semibold leading-none text-black opacity-5 outline-none focus:outline-none"
                     onClick={() => setShowModal(false)}
@@ -118,12 +116,7 @@ const AddEmpForm = ({ departments }) => {
                 <div className="relative flex-auto p-6">
                   <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
                     <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-                      <form
-                        className="space-y-6"
-                        action="#"
-                        method="POST"
-                        onSubmit={handleSubmit}
-                      >
+                      <form className="space-y-6" action="#" method="POST" onSubmit={handleSubmit}>
                         <div className="flex justify-between gap-2">
                           <div>
                             <label
@@ -188,45 +181,25 @@ const AddEmpForm = ({ departments }) => {
 
                         <div>
                           <label
-                            htmlFor="title"
+                            htmlFor="cccd"
                             className="block text-sm font-medium leading-6 text-gray-900"
                           >
-                            Chức vụ
+                            Căn cước công dân
                           </label>
                           <div className="mt-2">
                             <input
-                              id="title"
-                              name="title"
+                              id="cccd"
+                              name="cccd"
                               type="text"
-                              autoComplete="title"
+                              autoComplete="cccd"
                               required
                               className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                              onChange={(e) => setTitle(e.target.value)}
+                              onChange={(e) => setCccd(e.target.value)}
                             />
                           </div>
                         </div>
 
                         <div className="flex gap-2 justify-between">
-                          <div>
-                            <label
-                              htmlFor="cccd"
-                              className="block text-sm font-medium leading-6 text-gray-900"
-                            >
-                              Căn cước công dân
-                            </label>
-                            <div className="mt-2">
-                              <input
-                                id="cccd"
-                                name="cccd"
-                                type="text"
-                                autoComplete="cccd"
-                                required
-                                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                onChange={(e) => setCccd(e.target.value)}
-                              />
-                            </div>
-                          </div>
-
                           <div>
                             <label
                               htmlFor="department"
@@ -243,13 +216,40 @@ const AddEmpForm = ({ departments }) => {
                               >
                                 <option value="">Chọn phòng ban</option>
                                 {departments.map((department) => (
-                                  <option
-                                    key={department._id}
-                                    value={department._id}
-                                  >
+                                  <option key={department._id} value={department._id}>
                                     {department.name}
                                   </option>
                                 ))}
+                              </select>
+                            </div>
+                          </div>
+                          <div>
+                            <label
+                              htmlFor="title"
+                              className="block text-sm font-medium leading-6 text-gray-900"
+                            >
+                              Chức vụ
+                            </label>
+                            <div className="mt-2">
+                              <select
+                                name="title"
+                                id="title"
+                                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                onChange={(e) => setTitle(e.target.value)}
+                              >
+                                <option value="">Chọn chức vụ</option>
+                                {departments
+                                  .find((d) => d._id === department)
+                                  ?.titles.map((title, i) => (
+                                    <option
+                                      key={i}
+                                      value={title.name}
+                                      // disable if number of employees >= capacity
+                                      disabled={title.number_of_employees >= title.capacity}
+                                    >
+                                      {title.name}
+                                    </option>
+                                  ))}
                               </select>
                             </div>
                           </div>
@@ -294,9 +294,7 @@ const AddEmpForm = ({ departments }) => {
                               autoComplete="password_confirmation"
                               required
                               className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                              onChange={(e) =>
-                                setPasswordConfirmation(e.target.value)
-                              }
+                              onChange={(e) => setPasswordConfirmation(e.target.value)}
                             />
                           </div>
                         </div>

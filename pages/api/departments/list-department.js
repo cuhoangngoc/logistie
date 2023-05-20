@@ -23,6 +23,26 @@ export default async function handler(req, res) {
         .sort({ name: 1 })
         .toArray();
 
+      // departments.forEach((department) => {
+      //   department.employees.forEach((employee) => {
+      //     const title = department.titles.find((title) => title.name === employee.title);
+
+      //     // if title.number_of_people is not set, set it to 1 else increment it by 1
+      //     if (title) {
+      //       if (!title.number_of_employees) title.number_of_employees = 1;
+      //       else title.number_of_employees++;
+      //     }
+      //   });
+      // });
+
+      departments.forEach((department) => {
+        department.titles.forEach((title) => {
+          title.number_of_employees = department.employees.filter(
+            (employee) => employee.user_metadata.title === title.name
+          ).length;
+        });
+      });
+
       res.json(departments);
     } catch (err) {
       res.status(500).json({ statusCode: 500, message: err.message });

@@ -1,16 +1,44 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { showErrorToast, showSuccessToast } from '../Toast';
 
-const EditInfoModal = ({ userProfile, isAdmin }) => {
+const EditInfoModal = ({
+  userProfile,
+  isAdmin,
+  cloudinaryConfig: { uploadEnpoint, uploadPreset },
+}) => {
   const [phone, setPhone] = useState(userProfile.user_metadata?.phone_number);
   const [address, setAddress] = useState(userProfile.user_metadata?.address);
   const [birthday, setBirthday] = useState(userProfile.user_metadata?.birthday);
   const [title, setTitle] = useState(userProfile.user_metadata?.title);
+  const [titles, setTitles] = useState([]);
   const [cccd, setCccd] = useState(userProfile.user_metadata?.cccd);
+  const [file, setFile] = useState(null);
+
+  useEffect(() => {
+    const fetchTitles = async () => {
+      if (!userProfile.user_metadata.department_id) return;
+
+      const res = await axios.get(`/api/departments/${userProfile.user_metadata.department_id}`);
+      setTitles(res.data.titles);
+    };
+
+    fetchTitles();
+  }, [userProfile.user_metadata.department_id]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    let picture = userProfile.picture;
+
+    if (file) {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('upload_preset', uploadPreset);
+      const response = await axios.post(uploadEnpoint, formData);
+      picture = response.data.secure_url;
+    }
+
     const user_metadata = {
       phone_number: phone,
       address,
@@ -21,6 +49,7 @@ const EditInfoModal = ({ userProfile, isAdmin }) => {
 
     const res = await axios.patch(`/api/users/${userProfile.email}`, {
       user_metadata,
+      picture,
     });
 
     if (res.status !== 200) {
@@ -30,6 +59,10 @@ const EditInfoModal = ({ userProfile, isAdmin }) => {
 
     showSuccessToast('Cập nhật thành công');
     document.getElementById('edit-info-modal').checked = false; // Hide the modal
+  };
+
+  const handleFileChange = (event) => {
+    setFile(event.target?.files[0]);
   };
 
   return (
@@ -48,6 +81,26 @@ const EditInfoModal = ({ userProfile, isAdmin }) => {
             {/* Edit profile form */}
             <form className="max-w-sm mx-auto">
               <div className="">
+                <div className="mb-5">
+                  <label
+                    htmlFor="picture"
+                    className="block text-sm font-medium leading-6 text-gray-900"
+                  >
+                    Ảnh đại diện
+                  </label>
+                  <div className="mt-2">
+                    <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
+                      <input
+                        type="file"
+                        name="picture"
+                        id="picture"
+                        accept="image/*"
+                        onChange={handleFileChange}
+                      />
+                    </div>
+                  </div>
+                </div>
+
                 {/* Address */}
                 <div className="mb-5">
                   <label
@@ -129,17 +182,25 @@ const EditInfoModal = ({ userProfile, isAdmin }) => {
                   </label>
                   <div className="mt-2">
                     <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
-                      <input
-                        type="text"
+                      <select
                         name="title"
                         id="title"
-                        autoComplete="title"
-                        className="block flex-1 border-0 bg-transparent py-1.5 pl-2 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 disabled:cursor-not-allowed disabled:bg-disabled disabled:rounded-md"
-                        placeholder="0123456789"
-                        defaultValue={title}
+                        className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                        value={title}
                         onChange={(e) => setTitle(e.target.value)}
                         disabled={!isAdmin} // disabled if the login user is not admin (user with role of 1)
-                      />
+                      >
+                        <option value="">Chọn chức vụ</option>
+                        {titles.map((title, i) => (
+                          <option
+                            key={i}
+                            value={title.name}
+                            disabled={title.number_of_employees >= title.capacity}
+                          >
+                            {title.name}
+                          </option>
+                        ))}
+                      </select>
                     </div>
                   </div>
                 </div>
@@ -172,18 +233,11 @@ const EditInfoModal = ({ userProfile, isAdmin }) => {
           </div>
 
           <div className="modal-action">
-            <label
-              htmlFor="edit-info-modal"
-              className="btn bg-error text-white"
-            >
+            <label htmlFor="edit-info-modal" className="btn bg-error text-white">
               Đóng
             </label>
 
-            <button
-              type="submit"
-              className="btn bg-success text-white"
-              onClick={handleSubmit}
-            >
+            <button type="submit" className="btn bg-success text-white" onClick={handleSubmit}>
               Lưu
             </button>
           </div>
