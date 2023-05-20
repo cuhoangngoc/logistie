@@ -1,7 +1,7 @@
 import { MongoClient } from "mongodb";
 
 // Lấy MONGO_URL từ file .env.local
-const MONGO_URL = process.env.MONGO_URL;
+const MONGO_URL = process.env.MONGO_URI;
 
 export default async function handler(req, res) {
     // Kết nối tới MongoDB

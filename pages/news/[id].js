@@ -3,8 +3,10 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/router"
 import Layout from '../../components/Layout/Layout';
 import EditNews from '../../components/NewsPage/EditNews';
+import { withPageAuthRequired } from '@auth0/nextjs-auth0/client';
+import Image from 'next/image';
 
-function NewsDetail() {
+function NewsDetail({user}) {
   const router = useRouter();
   const { id } = router.query;
   const [news, setNews] = useState([]);
@@ -22,16 +24,20 @@ function NewsDetail() {
   const date1_format = `${date1.getDate()}/${date1.getMonth() + 1}/${date1.getFullYear()}`;
 
   return (
-    <Layout>
+    <Layout user={user}>
       <div className='p-2'>
         <h1 className='text-4xl font-bold my-5'>{news.title}</h1>
+        {news.imageSrc && <Image src={news.imageSrc} className='rounded-l-xl' alt={news.title} width="200" height="100"></Image>}
         <p className='my-2'>Ngày tạo: {date_format}</p>
         <p className='my-2'>Ngày chỉnh sửa gần nhất: {date1_format}</p>
         <p dangerouslySetInnerHTML={{ __html: news.content}}></p>
       </div>
-      <EditNews id={id} content={news.content} title={news.title}></EditNews>
+      
+      {user ? (
+          <EditNews id={id} content={news.content} title={news.title} publicId={news.publicId}></EditNews>
+        ) : <EditNews id={id} content={news.content} title={news.title} publicId={news.publicId}></EditNews>}
     </Layout>
   );
 }
 
-export default NewsDetail;
+export default withPageAuthRequired(NewsDetail);

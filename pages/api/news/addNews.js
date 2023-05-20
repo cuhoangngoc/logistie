@@ -1,12 +1,17 @@
-import { MongoClient, ObjectId } from "mongodb";
+import { MongoClient } from "mongodb";
 import moment from 'moment-timezone';
 
 // Lấy MONGO_URL từ file .env.local
-const MONGO_URL = process.env.MONGO_URL;
+const MONGO_URL = process.env.MONGO_URI;
 
 export default async function handler(req, res) {
-    // Lấy id từ request params
-    const { title, content, user_id } = req.query;
+    if (req.method !== 'POST') {
+        res.status(405).json({ message: 'Method Not Allowed' });
+        return;
+    }
+
+    // Lấy thông tin từ body request
+    const { title, content, imageSrc, publicId, user_id} = req.body;
     const created_at = moment().tz('UTC').format('YYYY-MM-DDTHH:mm:ss.SSSZ');
     const updated_at = moment().tz('UTC').format('YYYY-MM-DDTHH:mm:ss.SSSZ');
 
@@ -21,10 +26,18 @@ export default async function handler(req, res) {
         const db = client.db("logistie");
         const collection = db.collection("news");
 
-        // Truy vấn tìm news theo id
-        const result = await collection.insertOne({user_id, title, content, updated_at, created_at});
+        // Thêm bản tin mới vào collection
+        const result = await collection.insertOne({
+            user_id,
+            title,
+            content,
+            imageSrc,
+            publicId,
+            updated_at,
+            created_at
+        });
 
-        // Trả về kết quả tìm được
+        // Trả về kết quả thành công
         res.status(201).json({ message: "Thêm bản tin thành công!", result });
     } catch (e) {
         // Trả về lỗi nếu có
