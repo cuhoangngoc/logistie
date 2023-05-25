@@ -6,7 +6,10 @@ import { useRouter } from 'next/router';
 import Image from 'next/image';
 import Button from '../../components/Button';
 import EditInfoModal from '../../components/Employees/edit-info-modal';
+import DeleteEmpModal from '../../components/Employees/delete-emp-modal';
 import Spinner from '../../components/Spinner';
+import { showSuccessToast } from '../../components/Toast';
+import DefaultAvatar from '../../public/imgs/nav-icons/user-32.png';
 
 export async function getServerSideProps(context) {
   return {
@@ -28,10 +31,13 @@ const Profile = ({ user, cloudinaryConfig }) => {
 
   useEffect(() => {
     const getUserProfile = async () => {
-      let res = await axios.get(`/api/users/get-user-info?email=${router.query.email}`);
+      let res = await axios.get(
+        `/api/users/get-user-info?email=${router.query.email}`
+      );
       setUserProfile(res.data);
 
       res = await axios.get(`/api/users/get-user-info?email=${user.email}`);
+      console.log(res);
       setSignedInUserRole(res.data.user_metadata.role);
       setLoading(false);
     };
@@ -49,7 +55,7 @@ const Profile = ({ user, cloudinaryConfig }) => {
           <div className="-mt-16 flex justify-center md:justify-start mb-5">
             <Image
               className="h-20 w-20 rounded-full border-2 object-cover"
-              src={userProfile.picture}
+              src={userProfile.picture || DefaultAvatar}
               alt={userProfile.name}
               width={100}
               height={100}
@@ -70,41 +76,57 @@ const Profile = ({ user, cloudinaryConfig }) => {
                   </td>
                 </tr>
                 <tr>
-                  <td className="text-gray-700 dark:text-gray-400 py-2">Email</td>
-                  <td className="text-gray-700 dark:text-gray-400 py-2">{userProfile.email}</td>
+                  <td className="text-gray-700 dark:text-gray-400 py-2">
+                    Email
+                  </td>
+                  <td className="text-gray-700 dark:text-gray-400 py-2">
+                    {userProfile.email}
+                  </td>
                 </tr>
                 <tr>
-                  <td className="text-gray-700 dark:text-gray-400 py-2">Chức vụ</td>
+                  <td className="text-gray-700 dark:text-gray-400 py-2">
+                    Chức vụ
+                  </td>
                   <td className="text-gray-700 dark:text-gray-400 py-2">
                     {userProfile?.user_metadata?.title}
                   </td>
                 </tr>
                 <tr>
-                  <td className="text-gray-700 dark:text-gray-400 py-2">Phòng ban</td>
+                  <td className="text-gray-700 dark:text-gray-400 py-2">
+                    Phòng ban
+                  </td>
                   <td className="text-gray-700 dark:text-gray-400 py-2">
                     {userProfile?.user_metadata?.department?.name}
                   </td>
                 </tr>
                 <tr>
-                  <td className="text-gray-700 dark:text-gray-400 py-2">CCCD</td>
+                  <td className="text-gray-700 dark:text-gray-400 py-2">
+                    CCCD
+                  </td>
                   <td className="text-gray-700 dark:text-gray-400 py-2">
                     {userProfile?.user_metadata?.cccd}
                   </td>
                 </tr>
                 <tr>
-                  <td className="text-gray-700 dark:text-gray-400 py-2">Ngày vào làm</td>
+                  <td className="text-gray-700 dark:text-gray-400 py-2">
+                    Ngày vào làm
+                  </td>
                   <td className="text-gray-700 dark:text-gray-400 py-2">
                     {Intl.DateTimeFormat('vi-VN').format(new Date())}
                   </td>
                 </tr>
                 <tr>
-                  <td className="text-gray-700 dark:text-gray-400 py-2">Địa chỉ</td>
+                  <td className="text-gray-700 dark:text-gray-400 py-2">
+                    Địa chỉ
+                  </td>
                   <td className="text-gray-700 dark:text-gray-400 py-2">
                     {userProfile?.user_metadata?.address ?? 'Chưa cập nhật'}
                   </td>
                 </tr>
                 <tr>
-                  <td className="text-gray-700 dark:text-gray-400 py-2">Ngày sinh</td>
+                  <td className="text-gray-700 dark:text-gray-400 py-2">
+                    Ngày sinh
+                  </td>
                   <td className="text-gray-700 dark:text-gray-400 py-2">
                     {userProfile?.user_metadata?.birthday
                       ? Intl.DateTimeFormat('vi-VN').format(
@@ -114,7 +136,9 @@ const Profile = ({ user, cloudinaryConfig }) => {
                   </td>
                 </tr>
                 <tr>
-                  <td className="text-gray-700 dark:text-gray-400 py-2">Số điện thoại</td>
+                  <td className="text-gray-700 dark:text-gray-400 py-2">
+                    Số điện thoại
+                  </td>
                   <td className="text-gray-700 dark:text-gray-400 py-2">
                     {userProfile.user_metadata?.phone_number ?? 'Chưa cập nhật'}
                   </td>
@@ -135,7 +159,7 @@ const Profile = ({ user, cloudinaryConfig }) => {
           />
         ) : null}
 
-        {/* <Button className="bg-error">Xóa</Button> */}
+        <DeleteEmpModal email={userProfile.email} />
       </section>
     </Layout>
   );

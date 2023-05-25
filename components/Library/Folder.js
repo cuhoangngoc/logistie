@@ -3,14 +3,21 @@ import Link from 'next/link';
 import { AiFillFolder } from 'react-icons/ai';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import { db } from '../../firebase/clientApp';
-import { collection, getDocs, query, where,deleteDoc,doc } from 'firebase/firestore';
-import {ref, deleteObject} from 'firebase/storage';
+import {
+  collection,
+  getDocs,
+  query,
+  where,
+  deleteDoc,
+  doc,
+} from 'firebase/firestore';
+import { ref, deleteObject } from 'firebase/storage';
 import { storage } from '../../firebase/clientApp';
-import {TiDeleteOutline} from 'react-icons/ti';
-const Folder = ({ folder,role }) => {
+import { TiDeleteOutline } from 'react-icons/ti';
+const Folder = ({ folder, role }) => {
   // Thực hiện truy vấn với điều kiện
   async function test(currentFolder) {
-    console.log(currentFolder)
+    console.log(currentFolder);
     //Khai báo hàm xáo
     async function deleteFolder(id) {
       await deleteDoc(doc(db, 'folders', id));
@@ -25,11 +32,11 @@ const Folder = ({ folder,role }) => {
       deleteObject(desertRef)
         .then(() => {
           // File deleted successfully
-          console.log('deleted successfully')
+          console.log('deleted successfully');
         })
         .catch((error) => {
           // Uh-oh, an error occurred!
-          console.log(error)
+          console.log(error);
         });
     }
     //
@@ -37,7 +44,10 @@ const Folder = ({ folder,role }) => {
     const usersRef = collection(db, 'folders');
     const q = query(
       usersRef,
-      where('path', 'array-contains', { id: currentFolder.id, name: currentFolder.name })
+      where('path', 'array-contains', {
+        id: currentFolder.id,
+        name: currentFolder.name,
+      })
     );
 
     // Lấy kết quả truy vấn
@@ -57,9 +67,9 @@ const Folder = ({ folder,role }) => {
         id: doc.id,
         ...doc.data(),
       }));
-      console.log(data)
+      console.log(data);
       if (data) {
-        data.map(value=>{
+        data.map((value) => {
           console.log(value.name);
           console.log(folder);
           const { path } = folder;
@@ -69,21 +79,20 @@ const Folder = ({ folder,role }) => {
           });
           const linkpath = location.join('/');
           // console.log(linkpath+'/'+folder.name+'/'+data.name)
-          const pathStorege = '/'+linkpath + '/' + currentFolder.name + '/' + value.name;
-          console.log(pathStorege)
+          const pathStorege =
+            '/' + linkpath + '/' + currentFolder.name + '/' + value.name;
+          console.log(pathStorege);
           deletePathStorage(pathStorege);
           deleteFile(value.id);
-        })
-       
+        });
       }
     }
-    if(data.length==0)
-    {
+    if (data.length == 0) {
       deleteFolder(folder.id);
     }
     data.map((value) => {
       findFiles(value.id);
-      deleteFolder(value.id)
+      deleteFolder(value.id);
       deleteFolder(folder.id);
     });
   }
@@ -97,29 +106,37 @@ const Folder = ({ folder,role }) => {
       />
       <div className="modal">
         <div className="modal-box">
-          <h3 className="font-bold text-lg">Delete folder: {folder.name}</h3>
-          <p className="py-4">Are you sure to delete this folder</p>
+          <h3 className="font-bold text-lg">Xóa thư mục: {folder.name}</h3>
+          <p className="py-4">Bạn có chắc muốn xóa thư mục này không?</p>
           <div className="modal-action">
             <label htmlFor={`my-modal-for-delete-${folder.id}`} className="btn">
-              Cancle
+              Hủy
             </label>
-            <label htmlFor={`my-modal-for-delete-${folder.id}`} className="btn" onClick={()=>{test(folder)}}>
-              Delete
+            <label
+              htmlFor={`my-modal-for-delete-${folder.id}`}
+              className="btn btn-error"
+              onClick={() => {
+                test(folder);
+              }}
+            >
+              Xóa
             </label>
           </div>
         </div>
       </div>
-      <div className="flex flex-row border border-black rounded-xl justify-between hover:bg-slate-400 p-2 mr-10 min-w-[200px] text-black group bg-white">
-        <Link href={`/library/folder/${folder.id}`} className='flex flex-row'>
-          
-            <AiFillFolder className="text-xl"></AiFillFolder>
-            <p> {folder.name} </p>
-         
+      <div className="flex flex-row border border-black rounded-xl justify-between hover:bg-slate-400 p-2 mr-10 min-w-[200px] text-black group bg-white items-center">
+        <Link
+          href={`/library/folder/${folder.id}`}
+          className="flex flex-row items-center gap-1"
+        >
+          <AiFillFolder className="text-xl"></AiFillFolder>
+          <p> {folder.name} </p>
         </Link>
-        {role===1&&( <label htmlFor={`my-modal-for-delete-${folder.id}`}>
-          <TiDeleteOutline className="text-xl hover:bg-slate-500 hover:rounded-xl hidden group-hover:block" />
-        </label>)}
-       
+        {role === 1 && (
+          <label htmlFor={`my-modal-for-delete-${folder.id}`}>
+            <TiDeleteOutline className="text-xl hover:rounded-xl hidden group-hover:block hover:text-red-700" />
+          </label>
+        )}
       </div>
     </>
   );

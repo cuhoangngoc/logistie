@@ -72,7 +72,7 @@ const Library = ({ currentFolder, user }) => {
         });
     }
     getRole();
-  }, []);
+  }, [user.email]);
   async function postdata() {
     try {
       const path = [...currentFolder.path];
@@ -96,22 +96,20 @@ const Library = ({ currentFolder, user }) => {
   // postdata();
   async function handleSubmit(e) {
     if (currentFolder == null) return;
-    const getChildfolder=[];
+    const getChildfolder = [];
     const q = query(
       collection(db, 'folders'),
-      where('parentID', '==', currentFolder.id),
+      where('parentID', '==', currentFolder.id)
     );
     const querySnapshot = await getDocs(q);
-    console.log(querySnapshot)
-    querySnapshot.forEach(value=>{
-      getChildfolder.push(value.data().name)
-    })
-    console.log(getChildfolder.includes(nameFolder))
-    if(!getChildfolder.includes(nameFolder))
-    {
+    console.log(querySnapshot);
+    querySnapshot.forEach((value) => {
+      getChildfolder.push(value.data().name);
+    });
+    console.log(getChildfolder.includes(nameFolder));
+    if (!getChildfolder.includes(nameFolder)) {
       postdata();
     }
-
   }
   async function handleUpload() {
     // const file = e.target.files[0];
@@ -119,20 +117,19 @@ const Library = ({ currentFolder, user }) => {
     console.log(fileName);
     if (currentFolder == null || fileName == null) return;
 
-    const getChildfile=[];
+    const getChildfile = [];
     const q = query(
       collection(db, 'files'),
-      where('folderId', '==', currentFolder.id),
+      where('folderId', '==', currentFolder.id)
     );
     const querySnapshot = await getDocs(q);
-    console.log(querySnapshot)
-    querySnapshot.forEach(value=>{
-      getChildfile.push(value.data().name)
-    })
-    console.log(getChildfile)
-    const state= getChildfile.includes(fileName.name)
-    if(!state)
-    {
+    console.log(querySnapshot);
+    querySnapshot.forEach((value) => {
+      getChildfile.push(value.data().name);
+    });
+    console.log(getChildfile);
+    const state = getChildfile.includes(fileName.name);
+    if (!state) {
       const { path } = currentFolder;
       const location = [];
       path.map((data) => {
@@ -151,11 +148,11 @@ const Library = ({ currentFolder, user }) => {
       const storageRef = ref(storage, `files/${client.client_id}/${filePath}`);
       const snapshot = await uploadBytes(storageRef, fileName);
       console.log(snapshot);
-  
+
       const storageRe = ref(storage, currentFolder.id);
-  
+
       const uploadTask = uploadBytesResumable(storageRe, fileName);
-  
+
       uploadTask.on(
         'state_changed',
         (snapshot) => {
@@ -176,8 +173,6 @@ const Library = ({ currentFolder, user }) => {
         }
       );
     }
-
-   
   }
 
   return (
@@ -185,7 +180,7 @@ const Library = ({ currentFolder, user }) => {
       <input type="checkbox" id="my-modal" className="modal-toggle" />
       <div className="modal">
         <div className="modal-box">
-          <h3 className="font-bold text-lg">New folder</h3>
+          <h3 className="font-bold text-lg">Thư mục mới</h3>
           <input
             className="border border-black w-full p-5 rounded-md"
             value={nameFolder}
@@ -195,16 +190,16 @@ const Library = ({ currentFolder, user }) => {
           ></input>
           <div className="modal-action">
             <label htmlFor="my-modal" className="btn">
-              cancel
+              Hủy
             </label>
             <label
               htmlFor="my-modal"
-              className="btn"
+              className="btn btn-success"
               onClick={(e) => {
                 handleSubmit(e);
               }}
             >
-              create
+              Thêm
             </label>
           </div>
         </div>
@@ -213,7 +208,7 @@ const Library = ({ currentFolder, user }) => {
       <input type="checkbox" id="my-modal1" className="modal-toggle" />
       <div className="modal">
         <div className="modal-box">
-          <h3 className="font-bold text-lg">File upload</h3>
+          <h3 className="font-bold text-lg">Upload file</h3>
           <input
             className="border border-black w-full p-5 rounded-md"
             type="file"
@@ -223,30 +218,34 @@ const Library = ({ currentFolder, user }) => {
           ></input>
           <div className="modal-action">
             <label htmlFor="my-modal1" className="btn">
-              cancel
+              Hủy
             </label>
-            <label htmlFor="my-modal1" className="btn" onClick={handleUpload}>
-              create
+            <label
+              htmlFor="my-modal1"
+              className="btn btn-success"
+              onClick={handleUpload}
+            >
+              Thêm
             </label>
           </div>
         </div>
       </div>
       <div className="dropdown">
-        <label tabIndex={0} className="btn m-1">
-          My drive
+        <label tabIndex={0} className="btn btn-primary m-1">
+          Thư viện tài liệu
         </label>
         <ul
           tabIndex={0}
           className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52"
         >
           <li>
-            <label htmlFor="my-modal">New folder</label>
+            <label htmlFor="my-modal">Thư mục mới</label>
           </li>
           <li>
-            <label htmlFor="my-modal1">File upload</label>
+            <label htmlFor="my-modal1">Upload file</label>
           </li>
           <li>
-            <a>Folder upload</a>
+            <a>Upload thư mục</a>
           </li>
         </ul>
       </div>

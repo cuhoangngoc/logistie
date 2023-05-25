@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { showErrorToast, showSuccessToast } from '../Toast';
+import { useRouter } from 'next/router';
+import Spinner from '../Spinner';
 
 const EditInfoModal = ({
   userProfile,
@@ -14,12 +16,17 @@ const EditInfoModal = ({
   const [titles, setTitles] = useState([]);
   const [cccd, setCccd] = useState(userProfile.user_metadata?.cccd);
   const [file, setFile] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const router = useRouter();
 
   useEffect(() => {
     const fetchTitles = async () => {
       if (!userProfile.user_metadata.department_id) return;
 
-      const res = await axios.get(`/api/departments/${userProfile.user_metadata.department_id}`);
+      const res = await axios.get(
+        `/api/departments/${userProfile.user_metadata.department_id}`
+      );
       setTitles(res.data.titles);
     };
 
@@ -28,6 +35,7 @@ const EditInfoModal = ({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     let picture = userProfile.picture;
 
@@ -54,11 +62,16 @@ const EditInfoModal = ({
 
     if (res.status !== 200) {
       showErrorToast('Cập nhật thất bại');
+      setLoading(false);
       return;
     }
 
-    showSuccessToast('Cập nhật thành công');
+    setLoading(false);
     document.getElementById('edit-info-modal').checked = false; // Hide the modal
+    showSuccessToast('Cập nhật thành công, trang sẽ reload sau 5s');
+    setTimeout(() => {
+      router.reload();
+    }, 5000);
   };
 
   const handleFileChange = (event) => {
@@ -67,13 +80,14 @@ const EditInfoModal = ({
 
   return (
     <>
+      {loading && <Spinner />}
       {/* The button to open modal */}
       <label htmlFor="edit-info-modal" className="btn bg-info text-white">
         Chỉnh sửa
       </label>
 
       <input type="checkbox" id="edit-info-modal" className="modal-toggle" />
-      <div className="modal">
+      <div className="modal z-10">
         <div className="modal-box w-11/12 max-w-5xl">
           <h3 className="font-bold text-lg">Chỉnh sửa hồ sơ nhân viên</h3>
 
@@ -195,7 +209,9 @@ const EditInfoModal = ({
                           <option
                             key={i}
                             value={title.name}
-                            disabled={title.number_of_employees >= title.capacity}
+                            disabled={
+                              title.number_of_employees >= title.capacity
+                            }
                           >
                             {title.name}
                           </option>
@@ -233,11 +249,18 @@ const EditInfoModal = ({
           </div>
 
           <div className="modal-action">
-            <label htmlFor="edit-info-modal" className="btn bg-error text-white">
+            <label
+              htmlFor="edit-info-modal"
+              className="btn bg-error text-white"
+            >
               Đóng
             </label>
 
-            <button type="submit" className="btn bg-success text-white" onClick={handleSubmit}>
+            <button
+              type="submit"
+              className="btn bg-success text-white"
+              onClick={handleSubmit}
+            >
               Lưu
             </button>
           </div>

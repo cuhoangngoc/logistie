@@ -4,7 +4,8 @@ import Image from 'next/image';
 import { showSuccessToast, showErrorToast } from '../../components/Toast';
 import axios from 'axios';
 import registerValidation from '../../validation/register-validation';
-import askForToken from '../../lib/ask-for-token';
+import Spinner from '../Spinner';
+import { useRouter } from 'next/router';
 
 const AddEmpForm = ({ departments }) => {
   const [showForm, setShowForm] = useState(false);
@@ -16,9 +17,13 @@ const AddEmpForm = ({ departments }) => {
   const [title, setTitle] = useState('');
   const [cccd, setCccd] = useState('');
   const [department, setDepartment] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const router = useRouter();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     const data = {
       email,
       username,
@@ -34,6 +39,7 @@ const AddEmpForm = ({ departments }) => {
 
     if (error) {
       showErrorToast(message);
+      setLoading(false);
       return;
     }
 
@@ -75,15 +81,21 @@ const AddEmpForm = ({ departments }) => {
     response = await axios.request(departmentOptions);
     if (response.status !== 200) {
       showErrorToast(response.data.message);
+      setLoading(false);
       return;
     }
 
-    showSuccessToast('Tạo nhân viên thành công');
     setShowForm(false);
+    setLoading(false);
+    showSuccessToast('Tạo nhân viên thành công, trang sẽ reload sau 5s');
+    setTimeout(() => {
+      router.reload();
+    }, 5000);
   };
 
   return (
     <>
+      {loading && <Spinner />}
       <button
         data-modal-target="authentication-modal"
         data-modal-toggle="authentication-modal"
@@ -96,13 +108,15 @@ const AddEmpForm = ({ departments }) => {
 
       {showForm && (
         <>
-          <div className="fixed inset-0 z-50 flex items-center justify-center overflow-auto outline-none transition-all duration-200 focus:outline-none">
+          <div className="fixed inset-0 z-20 flex items-center justify-center overflow-auto outline-none transition-all duration-200 focus:outline-none">
             <div className="relative mx-auto my-6 w-auto max-w-3xl">
               {/*content*/}
               <div className="relative flex w-full flex-col rounded-lg border-0 bg-white shadow-lg outline-none focus:outline-none">
                 {/*header*/}
                 <div className="flex items-start justify-between rounded-t border-b border-solid border-slate-200 p-5">
-                  <h3 className="text-3xl font-semibold">Thêm vào một nhân viên mới</h3>
+                  <h3 className="text-3xl font-semibold">
+                    Thêm vào một nhân viên mới
+                  </h3>
                   <button
                     className="float-right ml-auto border-0 bg-transparent p-1 text-3xl font-semibold leading-none text-black opacity-5 outline-none focus:outline-none"
                     onClick={() => setShowModal(false)}
@@ -116,7 +130,12 @@ const AddEmpForm = ({ departments }) => {
                 <div className="relative flex-auto p-6">
                   <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
                     <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-                      <form className="space-y-6" action="#" method="POST" onSubmit={handleSubmit}>
+                      <form
+                        className="space-y-6"
+                        action="#"
+                        method="POST"
+                        onSubmit={handleSubmit}
+                      >
                         <div className="flex justify-between gap-2">
                           <div>
                             <label
@@ -216,7 +235,10 @@ const AddEmpForm = ({ departments }) => {
                               >
                                 <option value="">Chọn phòng ban</option>
                                 {departments.map((department) => (
-                                  <option key={department._id} value={department._id}>
+                                  <option
+                                    key={department._id}
+                                    value={department._id}
+                                  >
                                     {department.name}
                                   </option>
                                 ))}
@@ -245,7 +267,10 @@ const AddEmpForm = ({ departments }) => {
                                       key={i}
                                       value={title.name}
                                       // disable if number of employees >= capacity
-                                      disabled={title.number_of_employees >= title.capacity}
+                                      disabled={
+                                        title.number_of_employees >=
+                                        title.capacity
+                                      }
                                     >
                                       {title.name}
                                     </option>
@@ -294,7 +319,9 @@ const AddEmpForm = ({ departments }) => {
                               autoComplete="password_confirmation"
                               required
                               className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                              onChange={(e) => setPasswordConfirmation(e.target.value)}
+                              onChange={(e) =>
+                                setPasswordConfirmation(e.target.value)
+                              }
                             />
                           </div>
                         </div>
@@ -324,7 +351,7 @@ const AddEmpForm = ({ departments }) => {
               </div>
             </div>
           </div>
-          <div className="fixed inset-0 z-40 bg-black opacity-25"></div>
+          <div className="fixed inset-0 z-10 bg-black opacity-25"></div>
         </>
       )}
     </>

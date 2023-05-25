@@ -41,7 +41,9 @@ const Layout = ({ user, children }) => {
     {
       name: 'Yêu cầu',
       href: '/requests',
-      icon: <Image src={ReqIcon} alt="" className="h-8 w-8 object-scale-down" />,
+      icon: (
+        <Image src={ReqIcon} alt="" className="h-8 w-8 object-scale-down" />
+      ),
     },
     {
       name: 'Đăng xuất',
@@ -84,13 +86,18 @@ const Layout = ({ user, children }) => {
 
       <aside
         id="logo-sidebar"
-        className="fixed left-0 top-0 z-40 h-screen w-64 -translate-x-full transition-transform sm:translate-x-0"
+        className="fixed left-0 top-0 z-10 h-screen w-64 -translate-x-full transition-transform sm:translate-x-0"
         aria-label="Sidebar"
       >
         <div className="h-full overflow-y-auto bg-gray-50 px-3 py-4 dark:bg-gray-800">
           {/* Logo */}
           <Link href="/" className="mb-5 flex items-center pl-2.5">
-            <Image src={Logo} className="mr-3 h-16 w-16" alt="IE tutor Logo" priority />
+            <Image
+              src={Logo}
+              className="mr-3 h-16 w-16"
+              alt="IE tutor Logo"
+              priority
+            />
             <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
               Logistie
             </span>
@@ -104,7 +111,9 @@ const Layout = ({ user, children }) => {
                   className="flex items-center rounded-lg p-2 text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
                 >
                   {link.icon}
-                  <span className="ml-3 flex-1 whitespace-nowrap">{link.name}</span>
+                  <span className="ml-3 flex-1 whitespace-nowrap">
+                    {link.name}
+                  </span>
                 </Link>
               </li>
             ))}
