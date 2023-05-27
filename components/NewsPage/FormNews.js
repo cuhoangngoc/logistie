@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Editor from '../Editor';
 
-function FormNews() {
+const FormNews = ({ user_id, CLOUDINARY_CLOUD_NAME }) => {
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
     const [imageSrc, setImageSrc] = useState();
@@ -29,10 +29,10 @@ function FormNews() {
         for (const file of fileInput.files) {
             formData.append('file', file);
         }
-        formData.append('upload_preset', 'my-uploads');
+        formData.append('upload_preset', 'logistie_news_uploads');
         let public_id = "";
         try {
-            const res = await fetch('https://api.cloudinary.com/v1_1/logistie/image/upload', {
+            const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`, {
                 method: 'POST',
                 body: formData
             });
@@ -56,7 +56,7 @@ function FormNews() {
                     content,
                     imageSrc,
                     publicId: public_id,
-                    user_id: 1,
+                    user_id: user_id,
                 }),
             });
             const data1 = await res.json();

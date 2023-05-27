@@ -2,13 +2,10 @@ import React, { useState } from 'react'
 import Button from './Button'
 import FormEditNews from './FormEditNews'
 import crypto from "crypto";
+import { useRouter } from 'next/router';
 
-const cloudName = "logistie";
-const apiKey = "532218632188824";
-const apiSecret = "R0JzI2hM-1X3_h-Y5mKWS2q6XRQ";
-
-
-const EditNews = ({ id, content, title, publicId }) => {
+const EditNews = ({ id, content, title, publicId, cloudName, apiKey, apiSecret }) => {
+    const router = useRouter();
     const [isShowing, setIsShowing] = useState(false);
 
     const generateSHA1 = (data) => {
@@ -60,11 +57,13 @@ const EditNews = ({ id, content, title, publicId }) => {
             });
 
             if (response.ok) {
+
+                // Nếu thành công, hiển thị thông báo và làm gì đó khác nếu cần
+                router.push("/");
+                alert('Xóa bản tin thành công!');
                 // Xóa hình ảnh
                 await handleDeleteImage();
-                // Nếu thành công, hiển thị thông báo và làm gì đó khác nếu cần
-                alert('Xóa bản tin thành công!');
-                window.location.href = "/";
+
             } else {
                 // Nếu có lỗi, hiển thị thông báo lỗi
                 alert('Đã có lỗi xảy ra khi xóa bản tin!');
@@ -79,11 +78,25 @@ const EditNews = ({ id, content, title, publicId }) => {
 
     return (
         <div>
-            <Button text="Sửa bản tin" color="blue" onClick={() => setIsShowing(!isShowing)} />
-            <Button text="Xóa bản tin" color="red" onClick={handleDeleteClick} />
+            <div className='flex justify-end'>
+                <Button text="Sửa bản tin" color="blue" onClick={() => setIsShowing(!isShowing)} />
+                <Button text="Xóa bản tin" color="red" onClick={handleDeleteClick} />
+            </div>
+
             {isShowing && <FormEditNews id={id} content={content} title={title} />}
         </div>
+
     )
+}
+export async function getServerSideProps() {
+    // Đọc giá trị biến môi trường từ process.env và truyền vào props
+    return {
+        props: {
+            cloudName: process.env.CLOUDINARY_CLOUD_NAME,
+            apiKey: process.env.CLOUDINARY_API_KEY,
+            apiSecret: process.env.CLOUDINARY_API_SECRET
+        },
+    };
 }
 
 export default EditNews
