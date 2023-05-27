@@ -1,7 +1,7 @@
 import { MongoClient, ObjectId } from 'mongodb';
 import moment from 'moment-timezone';
 
-const MONGO_URL = process.env.MONGO_URL;
+const MONGO_URL = process.env.MONGO_URI;
 
 export default async function handler(req, res) {
     if (req.method !== 'PUT') {
