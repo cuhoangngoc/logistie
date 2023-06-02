@@ -6,6 +6,7 @@ import Paper from '@mui/material/Paper';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import Spinner from '../../components/Spinner';
 import { ViewState, EditingState } from '@devexpress/dx-react-scheduler';
 import {
   Scheduler,
@@ -54,7 +55,7 @@ export async function getServerSideProps() {
   };
 }
 
-const PREFIX = 'Demo';
+const PREFIX = 'ResourcesPage';
 
 const classes = {
   container: `${PREFIX}-container`,
@@ -118,10 +119,11 @@ const ExternalViewSwitcher = ({ currentViewName, onChange }) => (
   </RadioGroup>
 );
 
-class Demo extends React.PureComponent {
+class ResourcesPage extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
+      loading: true,
       currentViewName: 'Week',
 
       data: props.appointments.map((appointment) => {
@@ -242,14 +244,23 @@ class Demo extends React.PureComponent {
       );
 
       this.setState({ userProfile: res.data });
+      this.setState({ loading: false });
     };
 
     getUserProfile();
   }
 
   render() {
-    const { data, resources, mainResourceName, currentViewName, userProfile } =
-      this.state;
+    const {
+      data,
+      resources,
+      mainResourceName,
+      currentViewName,
+      userProfile,
+      loading,
+    } = this.state;
+
+    if (loading) return <Spinner />;
 
     return (
       <Layout user={this.props.user}>
@@ -304,4 +315,4 @@ class Demo extends React.PureComponent {
   }
 }
 
-export default withPageAuthRequired(Demo);
+export default withPageAuthRequired(ResourcesPage);

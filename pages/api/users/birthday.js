@@ -1,4 +1,5 @@
 import clientPromise from '../../../lib/mongodb';
+import { ObjectId } from 'mongodb';
 
 export default async function handler(req, res) {
   const today = new Date().toISOString().slice(0, 10);
@@ -21,6 +22,22 @@ export default async function handler(req, res) {
       },
     })
     .toArray();
+
+  result.forEach((user) => {
+    // Add a news of birthday for each user
+    client
+      .db('logistie')
+      .collection('news')
+      .insertOne({
+        user_id: new ObjectId(user._id),
+        content: `Hôm nay là sinh nhật của <strong>${user.name}</strong>! Hãy gửi lời chúc tới bạn ấy nhé!`,
+        type: 'birthday',
+        publicId: null,
+        imageSrc: `${process.env.NEXT_PUBLIC_BASE_URL}/public/imgs/birthday.jpg}`,
+        created_at: new Date(),
+        updated_at: new Date(),
+      });
+  });
 
   res.json(result);
 }
