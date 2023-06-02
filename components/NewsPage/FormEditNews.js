@@ -1,11 +1,16 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 import Editor from '../Editor';
+import { showSuccessToast, showErrorToast } from '../Toast';
+import Spinner from '../Spinner';
+import { useRouter } from 'next/router';
 
 const FormEditNews = ({ id, content, title }) => {
   const [newTitle, setNewTitle] = useState(title);
   const [newContent, setNewContent] = useState(content);
   const news = JSON.parse(sessionStorage.getItem('news'));
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const handleTitleChange = (event) => {
     setNewTitle(event.target.value);
@@ -17,6 +22,7 @@ const FormEditNews = ({ id, content, title }) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setLoading(true);
     // Do something with the title and content here
     try {
       const res = await fetch(
@@ -27,7 +33,11 @@ const FormEditNews = ({ id, content, title }) => {
       );
       const data = await res.json();
       console.log(data.message);
-      alert('Đã cập nhật bản tin thành công!');
+      showSuccessToast('Cập nhật bản tin thành công');
+      setTimeout(() => {
+        router.reload();
+      }, 5000);
+      setLoading(false);
     } catch (error) {
       console.log(error);
     }
@@ -35,6 +45,7 @@ const FormEditNews = ({ id, content, title }) => {
 
   return (
     <>
+      {loading && <Spinner />}
       <button
         type="button"
         className="inline-flex items-center justify-center gap-2 rounded-md border border-transparent bg-blue-500 px-4 py-3 text-sm font-semibold text-white transition-all hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
@@ -45,7 +56,7 @@ const FormEditNews = ({ id, content, title }) => {
 
       <div
         id="hs-vertically-centered-scrollable-modal"
-        className="hs-overlay fixed left-0 top-0 z-10 hidden h-full w-full overflow-y-auto overflow-x-hidden"
+        className="hs-overlay fixed left-0 top-0 z-[60] hidden h-full w-full overflow-y-auto overflow-x-hidden"
       >
         <div className="m-3 mt-0 flex h-[calc(100%-3.5rem)] min-h-[calc(100%-3.5rem)] items-center opacity-0 transition-all ease-out hs-overlay-open:mt-7 hs-overlay-open:opacity-100 hs-overlay-open:duration-500 sm:mx-auto sm:w-full sm:max-w-lg">
           <div className="flex max-h-full flex-col overflow-hidden rounded-xl border bg-white shadow-sm">
@@ -92,6 +103,7 @@ const FormEditNews = ({ id, content, title }) => {
                   <button
                     className="focus:shadow-outline flex justify-end rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700 focus:outline-none"
                     type="submit"
+                    data-hs-overlay="#hs-vertically-centered-scrollable-modal"
                   >
                     Cập nhật
                   </button>
