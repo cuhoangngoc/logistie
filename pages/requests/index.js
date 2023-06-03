@@ -5,6 +5,7 @@ import axios from 'axios';
 import ReqInfoModal from '../../components/Requests/ReqInfoModal';
 import { useEffect, useState } from 'react';
 import color from '../../lib/highlight-status';
+import Link from 'next/link';
 
 export async function getServerSideProps(context) {
   // get all departments
@@ -84,7 +85,10 @@ const Request = ({ user, departments, requests }) => {
                   <td>{req.department.name}</td>
                   <td className={`${color[req.status]}`}>{req.status}</td>
                   <td>
-                    <ReqInfoModal request={req} />
+                    {/* <ReqInfoModal request={req} /> */}
+                    <Link href={`/requests/${req._id}`} className="text-primary underline">
+                      Xem chi tiết
+                    </Link>
                   </td>
                 </tr>
               ))}
@@ -131,7 +135,10 @@ const Request = ({ user, departments, requests }) => {
                       <td>{req.department.name}</td>
                       <td className={`${color[req.status]}`}>{req.status}</td>
                       <td>
-                        <ReqInfoModal request={req} />
+                        {/* <ReqInfoModal request={req} /> */}
+                        <Link href={`/requests/${req._id}`} className="text-primary underline">
+                          Xem chi tiết
+                        </Link>
                       </td>
                     </tr>
                   ))

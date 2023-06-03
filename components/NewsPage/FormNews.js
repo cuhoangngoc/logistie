@@ -104,7 +104,7 @@ const FormNews = ({ user_id, CLOUDINARY_CLOUD_NAME }) => {
       </div>
       <div className="mb-4">
         <p>
-          <input type="file" name="file" onChange={handleOnChange} />
+          <input type="file" name="file" onChange={handleOnChange} accept="image/*" />
         </p>
 
         <img src={imageSrc} />

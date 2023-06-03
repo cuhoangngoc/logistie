@@ -73,14 +73,13 @@ export default async function handler(req, res) {
       if (appointments.length > 0)
         res.status(400).json({
           statusCode: 400,
-          message: 'There is already an appointment at this time',
+          message: 'Đã có cuộc hẹn khác trong thời gian này',
         });
 
       if (members.length > 0)
         res.status(400).json({
           statusCode: 400,
-          message:
-            'One of the members is already in an appointment at this time',
+          message: 'Một số thành viên đã có cuộc hẹn khác trong thời gian này',
         });
 
       // create appointment if there is no conflict and return it

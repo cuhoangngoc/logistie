@@ -2,11 +2,14 @@ import style from './requests.module.css';
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { showSuccessToast, showErrorToast } from '../Toast';
+import { useRouter } from 'next/router';
+import { set } from 'mongoose';
 
 const AddReqModal = ({ user, departments }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [department, setDepartment] = useState('');
+  const router = useRouter();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -27,13 +30,18 @@ const AddReqModal = ({ user, departments }) => {
       return;
     }
 
-    showSuccessToast('Gửi yêu cầu thành công');
     document.getElementById('add-request-modal').checked = false; // Hide the modal
+
+    router.reload();
+
+    setTimeout(() => {
+      showSuccessToast('Gửi yêu cầu thành công');
+    }, 0);
   };
   return (
     <>
       {/* The button to open modal */}
-      <label htmlFor="add-request-modal" className="btn btn-primary text-white">
+      <label htmlFor="add-request-modal" className="btn-primary btn text-white">
         Gửi yêu cầu
       </label>
 
@@ -41,9 +49,9 @@ const AddReqModal = ({ user, departments }) => {
       <input type="checkbox" id="add-request-modal" className="modal-toggle" />
       <div className="modal">
         <div className="modal-box w-11/12 max-w-5xl">
-          <h3 className="font-bold text-lg">Gửi yêu cầu của bạn</h3>
+          <h3 className="text-lg font-bold">Gửi yêu cầu của bạn</h3>
 
-          <form action="" className="max-w-md mx-auto">
+          <form action="" className="mx-auto max-w-md">
             <div className="flex flex-col gap-4">
               <div className="relative">
                 <input
@@ -56,7 +64,7 @@ const AddReqModal = ({ user, departments }) => {
                 />
                 <label
                   htmlFor="title"
-                  className={`${style.label} peer-focus:text-primary peer-focus:px-2 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4`}
+                  className={`${style.label} peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:scale-100 peer-focus:top-2 peer-focus:-translate-y-4 peer-focus:scale-75 peer-focus:px-2 peer-focus:text-primary`}
                 >
                   Tiêu đề
                 </label>
@@ -75,7 +83,7 @@ const AddReqModal = ({ user, departments }) => {
                 />
                 <label
                   htmlFor="description"
-                  className={`${style.label} peer-focus:text-primary peer-focus:px-2 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4`}
+                  className={`${style.label} peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:scale-100 peer-focus:top-2 peer-focus:-translate-y-4 peer-focus:scale-75 peer-focus:px-2 peer-focus:text-primary`}
                 >
                   Mô tả
                 </label>
@@ -85,7 +93,7 @@ const AddReqModal = ({ user, departments }) => {
               <select
                 name="department"
                 id="department"
-                className="bg-gray-50 border border-gray-300 text-gray-900 mb-6 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                className="mb-6 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
                 onChange={(e) => setDepartment(e.target.value)}
               >
                 <option value="">Đến đơn vị</option>
@@ -99,14 +107,10 @@ const AddReqModal = ({ user, departments }) => {
           </form>
 
           <div className="modal-action">
-            <label htmlFor="add-request-modal" className="btn btn-error">
+            <label htmlFor="add-request-modal" className="btn-error btn">
               Đóng
             </label>
-            <button
-              type="submit"
-              className="btn btn-success text-white"
-              onClick={handleSubmit}
-            >
+            <button type="submit" className="btn-success btn text-white" onClick={handleSubmit}>
               Lưu
             </button>
           </div>

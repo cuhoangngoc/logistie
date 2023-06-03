@@ -20,6 +20,7 @@ function NewsDetail({ user }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setLoading(true);
     fetch(`../../api/news/getNewsByID?id=${id}`)
       .then((response) => response.json())
       .then((data) => {
@@ -28,10 +29,12 @@ function NewsDetail({ user }) {
         sessionStorage.setItem('news', JSON.stringify(data));
         setDateFormat(Intl.DateTimeFormat('vi-VN').format(new Date(news?.created_at)));
         setDateFormat1(Intl.DateTimeFormat('vi-VN').format(new Date(news?.updated_at)));
+        setLoading(false);
       })
       .catch((error) => console.error(error));
 
     const fetchUserData = async () => {
+      setLoading(true);
       try {
         const response = await fetch(`/api/users/get-user-by-id?id=${news.user_id}`, {
           method: 'GET',
@@ -44,6 +47,7 @@ function NewsDetail({ user }) {
         const userData = await response.json();
         setUser(userData);
         console.log(userData);
+        setLoading(false);
         return userData;
       } catch (error) {
         console.error(error);
@@ -51,8 +55,10 @@ function NewsDetail({ user }) {
     };
 
     const getSignedInUser = async () => {
+      setLoading(true);
       const res = await axios.get(`/api/users/get-user-info?email=${user.email}`);
       setSignedInUser(res.data);
+      setLoading(false);
     };
 
     getSignedInUser();
